@@ -15,12 +15,14 @@ func Init(router *gin.Engine) {
 	findOrderByIdService := application.NewFindOrderByIdUseCase(os)
 	findAllOrdersService := application.NewFindAllOrdersUseCase(os)
 	updateOrderService := application.NewUpdateOrderUseCase(os)
+	processPaymentService := application.NewProcessPaymentUseCase(os)
 
 	createOrderController := controllers.NewCreateOrderController(*createOrderService)
 	deleteOrderController := controllers.NewDeleteOrderController(*deleteOrderService)
 	findOrderByIdController := controllers.NewFindOrderByIdController(*findOrderByIdService)
 	findAllOrdersController := controllers.NewFindAllOrdersController(*findAllOrdersService)
 	updateOrderController := controllers.NewUpdateOrderController(*updateOrderService)
+	processPaymentController := controllers.NewProccessPaymentOrderController(*processPaymentService)
 
 	OrdersRoutes(router, OrdersHandlers{
 		Create:   createOrderController,
@@ -28,5 +30,6 @@ func Init(router *gin.Engine) {
 		FindById: findOrderByIdController,
 		FindAll:  findAllOrdersController,
 		Update:   updateOrderController,
+		Payment:  processPaymentController,
 	})
 }

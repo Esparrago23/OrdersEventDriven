@@ -47,7 +47,31 @@ func (mysql *MySQL) FindById(order_id int) (entities.Order, error) {
 	return order, nil
 }
 
+func (mysql *MySQL) ProccessPayment(order_id int) (entities.Order, error) {
+	order := entities.Order{}
+	query := fmt.Sprintf("SELECT * FROM orders WHERE order_id = %d", order_id)
+	row := mysql.conn.DB.QueryRow(query)
 
+	var createdAtStr, updatedAtStr []uint8
+	err := row.Scan(&order.OrderID, &order.ServiceName, &order.Description, &order.TotalAmount, &order.Status, &createdAtStr, &updatedAtStr)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return order, fmt.Errorf("orden con id %d no encontrada", order_id)
+		}
+		return order, fmt.Errorf("error al obtener orden: %v", err)
+	}
+	order.CreatedAt, err = time.Parse("2006-01-02 15:04:05", string(createdAtStr))
+	if err != nil {
+		return order, fmt.Errorf("error al parsear la fecha de creación: %v", err)
+	}
+	order.UpdatedAt, err = time.Parse("2006-01-02 15:04:05", string(updatedAtStr))
+	if err != nil {
+		return order, fmt.Errorf("error al parsear la fecha de actualización: %v", err)
+	}
+
+	return order, nil
+}
 
 func (mysql *MySQL) FindAll() ([]entities.Order, error) {
 	orders := []entities.Order{}

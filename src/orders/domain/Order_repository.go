@@ -10,5 +10,5 @@ type OrderRepository interface {
 	Save(order *entities.Order) error
 	Update(order *entities.Order) error
 	Delete(order_id int) error
-	
+	ProccessPayment(order_id int) (entities.Order, error)
 }
